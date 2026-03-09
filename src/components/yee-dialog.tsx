@@ -11,6 +11,7 @@ import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import React from "react";
 import { cva } from "class-variance-authority";
+import { useTheme } from "next-themes";
 
 interface YeeDialogProps {
   variant?: "dark" | "light";
@@ -66,7 +67,7 @@ const closeButtonVariants = cva(
 );
 
 export function YeeDialog({
-  variant = "light",
+  variant,
   asForm = true,
   open,
   onOpenChange,
@@ -77,14 +78,24 @@ export function YeeDialog({
   children,
   contentClassName,
 }: YeeDialogProps) {
+  const { theme } = useTheme();
   const Wrapper = asForm ? "form" : React.Fragment;
+  const isDark =
+    theme === "dark" ||
+    (theme === "system" &&
+      typeof window !== "undefined" &&
+      window.document.documentElement.classList.contains("dark"));
+  const themeVar = variant ? variant : isDark ? "dark" : "light";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <Wrapper>
         <DialogTrigger asChild>{trigger}</DialogTrigger>
         <DialogContent
-          className={cn(dialogVariants({ variant }), contentClassName)}
+          className={cn(
+            dialogVariants({ variant: themeVar as "dark" | "light" }),
+            contentClassName,
+          )}
           showCloseButton={false}
         >
           <DialogTitle className={cn("py-2", !showTitle ? "sr-only" : "")}>
@@ -101,16 +112,28 @@ export function YeeDialog({
 }
 
 export function YeeDialogPrimaryButton({
-  variant = "dark",
+  variant,
   className,
   children,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "dark" | "light";
 }) {
+  const { theme } = useTheme();
+  // 当 theme 为 'system' 时，通过判断 html 标签是否有 'dark' class 来决定实际主题
+  const isDark =
+    theme === "dark" ||
+    (theme === "system" &&
+      typeof window !== "undefined" &&
+      window.document.documentElement.classList.contains("dark"));
+  const themeVar = variant ? variant : isDark ? "dark" : "light";
+
   return (
     <Button
-      className={cn(primaryButtonVariants({ variant }), className)}
+      className={cn(
+        primaryButtonVariants({ variant: themeVar as "dark" | "light" }),
+        className,
+      )}
       {...props}
     >
       {children}
@@ -118,17 +141,29 @@ export function YeeDialogPrimaryButton({
   );
 }
 export function YeeDialogCloseButton({
-  variant = "dark",
+  variant,
   className,
   children,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "dark" | "light";
 }) {
+  const { theme } = useTheme();
+  // 当 theme 为 'system' 时，通过判断 html 标签是否有 'dark' class 来决定实际主题
+  const isDark =
+    theme === "dark" ||
+    (theme === "system" &&
+      typeof window !== "undefined" &&
+      window.document.documentElement.classList.contains("dark"));
+  const themeVar = variant ? variant : isDark ? "dark" : "light";
+
   return (
     <DialogClose asChild>
       <Button
-        className={cn(closeButtonVariants({ variant }), className)}
+        className={cn(
+          closeButtonVariants({ variant: themeVar as "dark" | "light" }),
+          className,
+        )}
         {...props}
       >
         {children}

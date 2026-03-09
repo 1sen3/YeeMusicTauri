@@ -6,6 +6,7 @@ import {
   YeeDialogCloseButton,
   YeeDialogPrimaryButton,
 } from "../yee-dialog";
+import { useTheme } from "../providers/theme-provider";
 
 export function LogoutForm({
   open,
@@ -14,6 +15,8 @@ export function LogoutForm({
   open: boolean;
   onOpenChange?: (open: boolean) => void;
 }) {
+  const { theme } = useTheme();
+
   const storeLogout = useUserStore((state) => state.logout);
 
   async function handleLogout() {
@@ -35,12 +38,19 @@ export function LogoutForm({
       showTitle={true}
       footer={
         <div className="w-full flex gap-2">
-          <YeeDialogCloseButton variant="light">取消</YeeDialogCloseButton>
-          <YeeDialogPrimaryButton variant="light" onClick={handleLogout}>
+          <YeeDialogCloseButton variant={theme === "dark" ? "dark" : "light"}>
+            取消
+          </YeeDialogCloseButton>
+          <YeeDialogPrimaryButton
+            onClick={handleLogout}
+            variant={theme === "dark" ? "dark" : "light"}
+            className="bg-destructive hover:bg-destructive/80"
+          >
             确定
           </YeeDialogPrimaryButton>
         </div>
       }
+      variant={theme === "dark" ? "dark" : "light"}
     >
       <span>确定要退出登录吗？</span>
     </YeeDialog>

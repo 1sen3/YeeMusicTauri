@@ -109,7 +109,7 @@ export const PlaylistSongPreview = memo(
 
             <PlayButton
               className={cn(
-                "transition-opacity duration-200 ease-out text-white size-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
+                "transition-opacity duration-200 ease-out text-foreground size-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
                 !isPlaying && "opacity-0  group-hover:opacity-100",
               )}
             />
@@ -128,7 +128,7 @@ export const PlaylistSongPreview = memo(
                   key={`${song.id}-${ar.id}-${idx}`}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    "text-sm text-black/60 hover:text-black/80",
+                    "text-sm text-foreground/60 hover:text-foreground/80",
                     artistStyle,
                   )}
                 >

@@ -50,7 +50,7 @@ export function AlbumItem({
               <Link
                 to={`/detail/artist?id=${ar.id}`}
                 key={`{ar.id}-${index}`}
-                className="text-black/60 hover:text-black/80 text-sm"
+                className="text-foreground/60 hover:text-foreground/80 text-sm"
               >
                 {ar.name}
                 {index !== album.artists!.length - 1 && "、"}
@@ -59,7 +59,7 @@ export function AlbumItem({
           </div>
         )}
         {showDate && (
-          <span className="text-black/60 text-sm">
+          <span className="text-foreground/60 text-sm">
             {formateDate(album.publishTime!)}
           </span>
         )}

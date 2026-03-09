@@ -18,8 +18,8 @@ export function PlayerBarSlider() {
 
     const v = new Vibrant(coverUrl);
     v.getPalette().then((palette) => {
-      const muted = palette.DarkMuted?.hex;
-      setCoverColor(muted || "rgba(0, 0, 0, 0)");
+      const vibrant = palette.Vibrant?.hex;
+      setCoverColor(vibrant || "rgba(0, 0, 0, 0)");
     });
   }, [coverUrl]);
 
@@ -38,7 +38,7 @@ export function PlayerBarSlider() {
         max={100}
         step={0.1}
         tooltip={formatDuration(currentTime)}
-        trackClassName="bg-black/5 rounded-none"
+        trackClassName="bg-background rounded-none"
         rangeClassName="bg-[var(--dynamic-cover-color)] rounded-r-full rounded-l-none"
       />
     </div>

@@ -21,7 +21,7 @@ export function PlaylistItem({ playlist }: { playlist: Playlist }) {
       <div className="flex flex-col justify-between items-start">
         <div className="flex flex-col">
           <span className="font-semibold text-md">{playlist.name}</span>
-          <span className="text-black/60 text-sm">
+          <span className="text-foreground/60 text-sm">
             {playlist.creator.nickname}
           </span>
         </div>

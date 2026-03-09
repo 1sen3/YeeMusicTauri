@@ -101,7 +101,7 @@ export function SongPreviewItem({ resource }: { resource: Resource }) {
           className="object-cover group-hover:brightness-50 transform transition-all duration-300 ease-in-out group-hover:blur-md"
         />
 
-        <div className="cursor-pointer opacity-0 group-hover:opacity-100 bg-black/50 absolute top-0 left-0 w-full h-full flex items-center justify-center  text-white transform transition-all duration-300 ease-in-out">
+        <div className="cursor-pointer opacity-0 group-hover:opacity-100 bg-black/50 absolute top-0 left-0 w-full h-full flex items-center justify-center  text-foreground transform transition-all duration-300 ease-in-out">
           <Play24Filled
             width={24}
             height={24}
@@ -115,7 +115,7 @@ export function SongPreviewItem({ resource }: { resource: Resource }) {
         <div className="line-clamp-1">
           {artists.map((ar, idx) => (
             <Link to={`/detail/artist?id=${ar.id}`} key={`${ar.id}-${idx}`}>
-              <span className="text-sm text-black/60 hover:text-black/80">
+              <span className="text-sm text-foreground/60 hover:text-foreground/80">
                 {ar.name}
                 {idx < artists.length - 1 && "、"}
               </span>
@@ -125,15 +125,15 @@ export function SongPreviewItem({ resource }: { resource: Resource }) {
       </div>
 
       <div className="flex items-center gap-4 opacity-0 group-hover:opacity-100 pr-6 translate-x-20 group-hover:translate-x-0 transform transition-all duration-300 ease-in-out">
-        <ArrowDownload24Regular className="size-5 text-black/60 cursor-pointer hover:text-black/80" />
+        <ArrowDownload24Regular className="size-5 text-foreground cursor-pointer hover:text-foreground/80" />
         <LikeIcon
           onClick={handleLike}
           className={cn(
-            "size-5 text-black/60 cursor-pointer hover:text-black/80",
+            "size-5 text-foreground cursor-pointer hover:text-foreground/80",
             isLiked && "text-red-500 hover:text-red-700",
           )}
         />
-        <MoreHorizontal24Regular className="size-5 text-black/60 cursor-pointer hover:text-black/80" />
+        <MoreHorizontal24Regular className="size-5 text-foreground cursor-pointer hover:text-foreground/80" />
       </div>
     </div>
   );

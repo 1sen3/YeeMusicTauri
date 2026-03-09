@@ -23,6 +23,7 @@ import {
 } from "../yee-dialog";
 import { cn } from "@/lib/utils";
 import { Checkmark24Filled } from "@fluentui/react-icons";
+import { useTheme } from "../providers/theme-provider";
 
 export function LoginForm({
   open,
@@ -165,6 +166,8 @@ export function LoginForm({
     }, 3000);
   }
 
+  const { theme } = useTheme();
+
   return (
     <YeeDialog
       asForm={true}
@@ -173,17 +176,20 @@ export function LoginForm({
       title="登录"
       footer={
         <div className="w-full flex gap-2">
-          <YeeDialogCloseButton variant="light">取消</YeeDialogCloseButton>
+          <YeeDialogCloseButton variant={theme === "dark" ? "dark" : "light"}>
+            取消
+          </YeeDialogCloseButton>
           <YeeDialogPrimaryButton
             type="submit"
             disabled={!captchaPassed}
             onClick={handleLogin}
-            variant="light"
+            variant={theme === "dark" ? "dark" : "light"}
           >
             {isLogin ? <Spinner /> : ""}登录
           </YeeDialogPrimaryButton>
         </div>
       }
+      variant={theme === "dark" ? "dark" : "light"}
     >
       <div className="p-4 w-full min-w-0">
         <Tabs
@@ -233,8 +239,8 @@ export function LoginForm({
                     className={cn(
                       captchaPassed
                         ? "bg-green-500 hover:bg-green-600"
-                        : "bg-black",
-                      "rounded-full shrink-0 text-white px-4 whitespace-nowrap overflow-hidden flex items-center justify-center",
+                        : "bg-foreground",
+                      "rounded-full shrink-0 text-background px-4 whitespace-nowrap overflow-hidden flex items-center justify-center",
                     )}
                     disabled={isLoad || captchaPassed}
                     onClick={handleGetCaptcha}

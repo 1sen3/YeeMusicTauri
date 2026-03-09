@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { useUserStore } from "@/lib/store/userStore";
 import { getUserPlaylists } from "@/lib/services/user";
 import { Spinner } from "../ui/spinner";
+import { useTheme } from "../providers/theme-provider";
 
 export function PlaylistDeleteButton({ playlist }: { playlist: Playlist }) {
   const [open, setOpen] = useState(false);
@@ -46,9 +47,11 @@ export function PlaylistDeleteButton({ playlist }: { playlist: Playlist }) {
     }
   }
 
+  const { theme } = useTheme();
+
   return (
     <YeeDialog
-      variant="light"
+      variant={theme === "dark" ? "dark" : "light"}
       title="删除歌单"
       asForm={false}
       showTitle
@@ -58,19 +61,22 @@ export function PlaylistDeleteButton({ playlist }: { playlist: Playlist }) {
         <YeeButton
           variant="outline"
           icon={<Delete24Filled className="size-4" />}
-          className="bg-white"
+          className="bg-card/40! backdrop-blur"
         />
       }
       footer={
         <div className="w-full flex gap-2">
-          <YeeDialogCloseButton variant="light" onClick={() => setOpen(false)}>
+          <YeeDialogCloseButton
+            variant={theme === "dark" ? "dark" : "light"}
+            onClick={() => setOpen(false)}
+          >
             取消
           </YeeDialogCloseButton>
           <YeeDialogPrimaryButton
-            variant="light"
+            variant={theme === "dark" ? "dark" : "light"}
             onClick={handleDelete}
             disabled={loading}
-            className="bg-destructive"
+            className="bg-destructive hover:bg-destructive/80"
           >
             <span className="flex items-center gap-2">
               {loading && <Spinner />}确定

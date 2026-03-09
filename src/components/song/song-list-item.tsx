@@ -25,8 +25,8 @@ export function SongListItem({
   return (
     <div
       className={cn(
-        "flex-1 flex flex-col hover:bg-black/5 rounded-md",
-        index % 2 === 0 && "bg-black/2",
+        "flex-1 flex flex-col hover:bg-foreground/5 rounded-md",
+        index % 2 === 0 && "bg-foreground/2",
         "transition-colors duration-300",
       )}
       onDoubleClick={() => playSong(song)}
@@ -48,9 +48,9 @@ export function SongListItem({
               <Play24Filled className="opacity-0 group-hover:opacity-100 size-4 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white transition-opacity" />
             </div>
           ) : (
-            <div className="size-6 flex items-center justify-center text-black/40">
+            <div className="size-6 flex items-center justify-center text-foreground/40">
               <span className="group-hover:hidden">{index + 1}</span>
-              <div className="hidden group-hover:flex hover:text-black/60 cursor-pointer">
+              <div className="hidden group-hover:flex hover:text-foreground/60 cursor-pointer">
                 <Play24Filled
                   className="size-4"
                   onClick={() => playSong(song)}
@@ -69,7 +69,7 @@ export function SongListItem({
               key={`${song.id}-${ar.id}-${idx}`}
               to={`/detail/artist?id=${ar.id}`}
             >
-              <span className="text-black/60 hover:text-black/80 cursor-pointer text-sm font-medium">
+              <span className="text-foreground/60 hover:text-foreground/80 cursor-pointer text-sm font-medium">
                 {ar.name}
                 {idx < song.ar!.length - 1 && "、"}
               </span>
@@ -80,17 +80,17 @@ export function SongListItem({
         {showAlbum &&
           (song.al.name ? (
             <Link to={`/detail/album?id=${song.al.id}`}>
-              <span className="line-clamp-1 w-3/4 text-black/60 hover:text-black/80 cursor-pointer text-sm">
+              <span className="line-clamp-1 w-3/4 text-foreground/60 hover:text-foreground/80 cursor-pointer text-sm">
                 {song.al.name}
               </span>
             </Link>
           ) : (
-            <span className="line-clamp-1 w-3/4 text-black/60 text-sm">
+            <span className="line-clamp-1 w-3/4 text-foreground/60 text-sm">
               未知专辑
             </span>
           ))}
 
-        <span className=" text-black/40 text-sm">
+        <span className=" text-foreground/40 text-sm">
           {formatDuration((song.dt || 1) / 1000)}
         </span>
         <span>

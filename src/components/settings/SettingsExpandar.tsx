@@ -79,18 +79,21 @@ export default function SettingsExpandar({
 }
 
 interface SettingsExpandarDetailProps {
-  desc: string;
+  desc?: string;
   trailing?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export function SettingsExpandarDetail({
   desc,
   trailing,
+  children,
 }: SettingsExpandarDetailProps) {
   return (
     <div className="w-full bg-card border border-t-0 p-4 flex items-center justify-between last:rounded-b-sm">
       <p className="text-sm text-card-foreground">{desc}</p>
       {trailing}
+      {children}
     </div>
   );
 }

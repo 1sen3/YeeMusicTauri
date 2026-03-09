@@ -15,6 +15,7 @@ import { updatePlaylist, updatePlaylistCover } from "@/lib/services/playlist";
 import { Spinner } from "../ui/spinner";
 import { getUserPlaylists } from "@/lib/services/user";
 import { useUserStore } from "@/lib/store/userStore";
+import { useTheme } from "../providers/theme-provider";
 
 export function PlaylistEditButton({
   playlist,
@@ -74,9 +75,11 @@ export function PlaylistEditButton({
     }
   }
 
+  const { theme } = useTheme();
+
   return (
     <YeeDialog
-      variant="light"
+      variant={theme === "dark" ? "dark" : "light"}
       title="编辑歌单"
       open={open}
       onOpenChange={(val) => {
@@ -87,9 +90,11 @@ export function PlaylistEditButton({
       contentClassName="sm:max-w-2xl"
       footer={
         <div className="w-full flex gap-2">
-          <YeeDialogCloseButton variant="light">取消</YeeDialogCloseButton>
+          <YeeDialogCloseButton variant={theme === "dark" ? "dark" : "light"}>
+            取消
+          </YeeDialogCloseButton>
           <YeeDialogPrimaryButton
-            variant="light"
+            variant={theme === "dark" ? "dark" : "light"}
             disabled={!canSubmit || uploading}
             onClick={handleEditPlaylist}
           >
@@ -103,7 +108,7 @@ export function PlaylistEditButton({
         <YeeButton
           variant="outline"
           icon={<Edit24Filled className="size-4" />}
-          className="bg-white"
+          className="bg-card/40! backdrop-blur"
         />
       }
     >
@@ -116,21 +121,21 @@ export function PlaylistEditButton({
         <div className="w-full flex flex-col gap-6">
           <div className="relative">
             <Input
-              className="rounded-full bg-white drop-shadow-sm text-black/80 pr-16"
+              className="rounded-full bg-card drop-shadow-sm text-foreground/80 pr-16"
               value={title}
               onChange={(e) => {
                 if (e.target.value.length > maxTitleLength) return;
                 setTitle(e.target.value);
               }}
             />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-black/40">
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-foreground/40">
               {titleLength}/{maxTitleLength}
             </span>
           </div>
 
           <div className="h-full relative">
             <Textarea
-              className="h-full resize-none rounded-2xl bg-white drop-shadow-md text-black/80 p-4"
+              className="h-full resize-none rounded-2xl bg-card drop-shadow-md text-foreground/80 p-4"
               placeholder="在此填写简介..."
               value={intro}
               onChange={(e) => {

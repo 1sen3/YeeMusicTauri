@@ -30,7 +30,7 @@ export default function RootLayout() {
               <AppSidebar />
             </Suspense>
 
-            <div className="relative flex flex-col flex-1 overflow-hidden bg-card/70 border border-border rounded-tl-lg border-b-0">
+            <div className="relative flex flex-col flex-1 overflow-hidden bg-card/60 border border-border rounded-tl-lg border-b-0">
               <main className="flex-1 w-full h-full overflow-y-auto">
                 <div className="W-full flex flex-col">
                   <Outlet />

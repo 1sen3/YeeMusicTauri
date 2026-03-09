@@ -7,7 +7,7 @@ import {
   YeeDialogPrimaryButton,
 } from "./yee-dialog";
 import { getCropppedImg } from "@/lib/utils";
-
+import { useTheme } from "./providers/theme-provider";
 export function YeeImageUploader({
   src,
   alt,
@@ -76,6 +76,7 @@ function YeeCropperDialog({
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+  const { theme } = useTheme();
 
   const onCropComplete = (_: Area, croppedAreaPixels: Area) => {
     setCroppedAreaPixels(croppedAreaPixels);
@@ -101,7 +102,7 @@ function YeeCropperDialog({
 
   return (
     <YeeDialog
-      variant="light"
+      variant={theme === "dark" ? "dark" : "light"}
       title="裁剪图片"
       asForm={false}
       open={!!image}
@@ -111,17 +112,23 @@ function YeeCropperDialog({
       contentClassName="sm:max-w-xl"
       footer={
         <div className="w-full flex gap-2">
-          <YeeDialogCloseButton variant="light" onClick={onClose}>
+          <YeeDialogCloseButton
+            variant={theme === "dark" ? "dark" : "light"}
+            onClick={onClose}
+          >
             取消
           </YeeDialogCloseButton>
-          <YeeDialogPrimaryButton variant="light" onClick={handleConfirm}>
+          <YeeDialogPrimaryButton
+            variant={theme === "dark" ? "dark" : "light"}
+            onClick={handleConfirm}
+          >
             确定
           </YeeDialogPrimaryButton>
         </div>
       }
     >
       <div className="flex flex-col gap-8 p-4">
-        <div className="relative w-full h-[400px] bg-black/5 rounded-xl overflow-hidden">
+        <div className="relative w-full h-[400px] bg-card/5 rounded-xl overflow-hidden">
           {image && (
             <Cropper
               image={image}
@@ -135,7 +142,7 @@ function YeeCropperDialog({
             />
           )}
         </div>
-        <p className="text-center text-sm text-black/50">
+        <p className="text-center text-sm text-foreground/50">
           拖拽、缩放图片以进行裁剪
         </p>
       </div>

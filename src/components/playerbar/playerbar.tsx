@@ -29,7 +29,7 @@ import { PlayerBarSlider } from "./playerbar-slider";
 export function PlayerBar() {
   return (
     <div
-      className="w-full h-20 grid grid-cols-3 relative bg-card/60"
+      className="w-full h-20 grid grid-cols-3 relative bg-card/80"
       onContextMenu={(e) => e.preventDefault()}
     >
       <LeftButtonRegion />
@@ -101,7 +101,7 @@ function LeftButtonRegion() {
                 <Link
                   to={`/detail/artist?id=${ar.id}`}
                   key={`${ar.id}-${idx}`}
-                  className="text-sm text-black/60 hover:text-black/80"
+                  className="text-sm text-foreground/60 hover:text-foreground/80"
                 >
                   {ar.name}
                   {idx < currentSong!.ar!.length - 1 && "、"}
@@ -189,7 +189,7 @@ function CenterButtonRegion() {
 function RightButtonRegion() {
   return (
     <div className="flex items-center justify-end gap-4 shrink-0 pr-4">
-      <MusicLevelPopover variant="light" />
+      <MusicLevelPopover />
 
       <PlaylistSheet />
 

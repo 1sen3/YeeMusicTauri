@@ -94,10 +94,10 @@ export function Titlebar() {
               className="rounded-sm"
             />
           </div>
-          <span className="truncate font-medium text-sm text-black/80">
+          <span className="truncate font-medium text-sm text-foreground">
             Yee Music
           </span>
-          <span className="text-xs font-bold bg-pink-200 rounded-sm px-1">
+          <span className="text-xs font-bold bg-pink-200 rounded-sm px-1 text-muted-foreground">
             dev
           </span>
         </div>
@@ -143,7 +143,7 @@ export function Titlebar() {
           <MaxmizeIcon />
         </Button>
         <Button
-          className="cursor-pointer h-12 w-12 rounded-tr-lg rounded-none hover:bg-red-500 hover:text-white border-0"
+          className="cursor-pointer h-12 w-12 rounded-tr-lg rounded-none hover:bg-destructive hover:text-white border-0"
           variant="ghost"
           size="icon"
           onClick={close}

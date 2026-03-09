@@ -1,5 +1,3 @@
-"use client";
-
 import { Search24Regular } from "@fluentui/react-icons";
 import { Input } from "../ui/input";
 import { useEffect, useState } from "react";
@@ -7,6 +5,7 @@ import { getSearchDefault, getSearchSuggest } from "@/lib/services/search";
 import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useNavigate } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 
 export function SearchInput() {
   const [query, setQuery] = useState("");
@@ -106,36 +105,49 @@ export function SearchInput() {
       />
 
       <Search24Regular
-        className="text-black/60 hover:text-black/80 size-4 cursor-pointer absolute right-2 top-1/2 -translate-y-1/2"
+        className="text-foreground/60 hover:text-foreground/80 size-4 cursor-pointer absolute right-2 top-1/2 -translate-y-1/2"
         onClick={() => handleSearch(query)}
       />
 
-      <div
-        className={cn(
-          "absolute top-full left-0 bg-card w-full px-2 py-2 drop-shadow-sm rounded-b-md border-0 flex flex-col gap-2",
-          isOpen && suggestions.length > 0
-            ? "visible opacity-100 border-t-2 border-primary"
-            : "invisible opacity-0",
-        )}
-      >
-        {suggestions.map((suggest, index) => (
-          <div
-            key={suggest}
-            className={cn(
-              "hover:bg-black/5 w-full px-4 py-2 rounded-md cursor-pointer relative",
-              index === selectedIndex && "bg-accent",
-            )}
-            onClick={() => {
-              handleSearch(suggest);
-            }}
+      <AnimatePresence>
+        {isOpen && suggestions.length > 0 && (
+          <motion.div
+            className="absolute top-full left-0 bg-card w-full drop-shadow-sm rounded-b-md border-0 overflow-hidden"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
           >
-            <span className={cn("line-clamp-1 text-sm")}>{suggest}</span>
-            {index === selectedIndex && (
-              <div className="bg-primary w-1 h-4 absolute left-0 top-1/2 -translate-y-1/2 -translate-x-0.5 rounded-full"></div>
-            )}
-          </div>
-        ))}
-      </div>
+            <div className="flex flex-col gap-2 px-2 py-2">
+              {suggestions.map((suggest, index) => (
+                <div
+                  key={suggest}
+                  className={cn(
+                    "hover:bg-black/5 w-full p-2 rounded-md cursor-pointer relative",
+                    index === selectedIndex && "bg-accent",
+                  )}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => {
+                    handleSearch(suggest);
+                  }}
+                >
+                  <span className={cn("line-clamp-1 text-sm")}>{suggest}</span>
+                  {index === selectedIndex && (
+                    <div className="bg-primary w-1 h-4 absolute left-0 top-1/2 -translate-y-1/2 -translate-x-0.5 rounded-full"></div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <motion.span
+              className="absolute top-0 w-full h-[2px] bg-primary left-1/2 -translate-x-1/2"
+              initial={{ opacity: 0, width: 0 }}
+              animate={{ opacity: 1, width: "100%" }}
+              exit={{ opacity: 0, width: 0 }}
+            ></motion.span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

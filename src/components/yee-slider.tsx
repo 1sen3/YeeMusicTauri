@@ -99,7 +99,7 @@ function YeeSlider({
                 />
               </TooltipTrigger>
               <TooltipContent
-                className="bg-white text-foreground drop-shadow-md"
+                className="bg-card text-foreground drop-shadow-md"
                 sideOffset={10}
               >
                 <p>{tooltip || value}</p>

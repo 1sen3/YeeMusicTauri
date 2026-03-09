@@ -88,9 +88,9 @@ export function PlaylistPage({
                 <AvatarImage src={creatorAvatarUrl} />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
-              <span className="text-black/80">{creatorName}</span>
+              <span className="text-foreground/80">{creatorName}</span>
             </div>
-            <span className="text-black/60 text-sm">
+            <span className="text-foreground/60 text-sm">
               创建于 {formateDate(createTime)}
             </span>
           </div>
@@ -104,11 +104,11 @@ export function PlaylistPage({
       >
         <div className="flex gap-4">
           <YeeButton
-            className="bg-white"
             variant="outline"
             onClick={() => playList(playlistId, "list")}
             disabled={playlist.trackCount === 0}
             icon={<Play24Filled className="size-4" />}
+            className="bg-card/40! backdrop-blur"
           />
           {isMyPlaylist && !isFavList && (
             <>
@@ -131,7 +131,7 @@ export function PlaylistPage({
         </div>
 
         <div className="relative flex items-center">
-          <Search24Filled className="size-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-black/60 pointer-events-none z-10" />
+          <Search24Filled className="size-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-foreground/60 pointer-events-none z-10" />
           <Input
             placeholder={searchOpen ? "搜索..." : ""}
             className={cn(

@@ -81,7 +81,7 @@ export function PlaylistSheet() {
         />
       </SheetTrigger>
       <SheetContent
-        className="bg-white p-2 pr-0 w-full rounded-sm"
+        className="bg-card p-2 pr-0 w-full rounded-sm"
         showCloseButton={false}
       >
         <SheetHeader>
