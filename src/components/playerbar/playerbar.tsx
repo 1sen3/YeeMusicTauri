@@ -9,7 +9,7 @@ import {
   SlideSize24Regular,
 } from "@fluentui/react-icons";
 import { usePlayerStore } from "@/lib/store/playerStore";
-import { cn } from "@/lib/utils";
+import { GetThumbnail, cn } from "@/lib/utils";
 
 import { REPEAT_MODE_CONFIG, SHUFFLE_CONFIG } from "@/lib/constants/player";
 import { Spinner } from "@/components/ui/spinner";
@@ -81,7 +81,7 @@ function LeftButtonRegion() {
             <div className="shrink-0 relative group cursor-pointer">
               <div className="w-12 h-12 rounded-sm overflow-hidden relative border shadow-sm">
                 <img
-                  src={currentSong.al?.picUrl || ""}
+                  src={GetThumbnail(currentSong.al.picUrl!)}
                   alt="Album cover"
                   loading="eager"
                   className="w-12 h-12 group-hover:brightness-50 transform transition-all duration-300 ease-in-out"

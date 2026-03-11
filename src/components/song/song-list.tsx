@@ -1,5 +1,6 @@
 import { Song } from "@/lib/types";
 import { SongListItem } from "./song-list-item";
+import { Virtuoso } from "react-virtuoso";
 
 export function SongList({
   songList,
@@ -11,18 +12,22 @@ export function SongList({
   showAlbum?: boolean;
 }) {
   return (
-    <div className="flex-1 flex flex-col gap-4">
-      {songList.map((song, index) => {
-        return (
+    <Virtuoso
+      useWindowScroll
+      customScrollParent={
+        document.getElementById("main-scroll-container") as HTMLElement
+      }
+      data={songList}
+      itemContent={(index, song) => (
+        <div className="pb-4">
           <SongListItem
-            key={song.id}
             song={song}
             index={index}
             showCover={showCover}
             showAlbum={showAlbum}
           />
-        );
-      })}
-    </div>
+        </div>
+      )}
+    />
   );
 }

@@ -1,5 +1,5 @@
 import { Song } from "@/lib/types";
-import { cn, formatDuration } from "@/lib/utils";
+import { GetThumbnail, cn, formatDuration } from "@/lib/utils";
 import {
   Delete24Regular,
   Pause24Filled,
@@ -102,7 +102,7 @@ export const PlaylistSongPreview = memo(
                 isPlaying && "brightness-50",
                 coverStyle,
               )}
-              src={song.al?.picUrl || ""}
+              src={GetThumbnail(song.al.picUrl!)}
               alt={`${song.al?.name}专辑封面`}
               loading="lazy"
             />

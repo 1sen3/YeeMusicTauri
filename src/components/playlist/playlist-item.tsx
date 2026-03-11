@@ -3,6 +3,7 @@ import { Play24Filled } from "@fluentui/react-icons";
 import { usePlayerStore } from "@/lib/store/playerStore";
 import { Link } from "react-router-dom";
 import { YeeButton } from "../yee-button";
+import { GetThumbnail } from "@/lib/utils";
 
 export function PlaylistItem({ playlist }: { playlist: Playlist }) {
   const playList = usePlayerStore((s) => s.playList);
@@ -12,7 +13,7 @@ export function PlaylistItem({ playlist }: { playlist: Playlist }) {
       <div className="size-24 relative rounded-md overflow-hidden drop-shadow-md cursor-pointer group">
         <Link to={`/detail/playlist?id=${playlist.id}`}>
           <img
-            src={playlist.coverImgUrl!}
+            src={GetThumbnail(playlist.coverImgUrl!)}
             alt={`${playlist.name} cover`}
             className="group-hover:brightness-60 transition-all duration-300 object-cover"
           />

@@ -1,9 +1,20 @@
+import {
+  WindowMaterial,
+  useMaterial,
+} from "@/components/providers/material-provider";
 import { Theme, useTheme } from "@/components/providers/theme-provider";
 import SettingsExpandar, {
   SettingsExpandarDetail,
 } from "@/components/settings/SettingsExpandar";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Color24Regular } from "@fluentui/react-icons";
+import { Color24Regular, Window24Regular } from "@fluentui/react-icons";
 import { IconBrandGithub } from "@tabler/icons-react";
 import { openUrl } from "@tauri-apps/plugin-opener";
 
@@ -55,37 +66,74 @@ export default function SettingPage() {
 
 function ThemeSettingCard() {
   const { theme, setTheme } = useTheme();
+  const { material, setMaterial } = useMaterial();
+
+  const themeStr =
+    theme === "system" ? "跟随系统" : theme === "light" ? "浅色" : "深色";
 
   return (
-    <SettingsExpandar
-      title="主题"
-      subtitle="选择 Yee Music 的显示主题"
-      icon={<Color24Regular />}
-      trailing={<span className="text-muted-foreground text-sm">跟随系统</span>}
-    >
-      <div className="flex flex-col gap-0">
-        <SettingsExpandarDetail>
-          <div className="w-full flex flex-col items-start">
-            <RadioGroup
-              defaultValue={theme}
-              onValueChange={(val) => setTheme(val as Theme)}
+    <div className="flex flex-col gap-1">
+      <SettingsExpandar
+        title="主题"
+        subtitle="选择 Yee Music 的显示主题"
+        icon={<Color24Regular />}
+        trailing={
+          <span className="text-muted-foreground text-sm">{themeStr}</span>
+        }
+      >
+        <div className="flex flex-col gap-0">
+          <SettingsExpandarDetail>
+            <div className="w-full flex flex-col items-start">
+              <RadioGroup
+                defaultValue={theme}
+                onValueChange={(val) => setTheme(val as Theme)}
+              >
+                <div className="flex gap-2 items-center">
+                  <RadioGroupItem value="light" />
+                  <span>浅色</span>
+                </div>
+                <div className="flex gap-2 items-center">
+                  <RadioGroupItem value="dark" />
+                  <span>深色</span>
+                </div>
+                <div className="flex gap-2 items-center">
+                  <RadioGroupItem value="system" />
+                  <span>跟随系统</span>
+                </div>
+              </RadioGroup>
+            </div>
+          </SettingsExpandarDetail>
+        </div>
+      </SettingsExpandar>
+
+      <SettingsExpandar
+        title="材质"
+        subtitle="选择 Yee Music 的窗口材质"
+        icon={<Window24Regular />}
+        trailing={
+          <div className="flex justify-end">
+            <Combobox
+              value={material}
+              onValueChange={(val) => setMaterial(val as WindowMaterial)}
             >
-              <div className="flex gap-2 items-center">
-                <RadioGroupItem value="light" />
-                <span>浅色</span>
-              </div>
-              <div className="flex gap-2 items-center">
-                <RadioGroupItem value="dark" />
-                <span>深色</span>
-              </div>
-              <div className="flex gap-2 items-center">
-                <RadioGroupItem value="system" />
-                <span>跟随系统</span>
-              </div>
-            </RadioGroup>
+              <ComboboxInput className="w-24 select-none! bg-card" />
+              <ComboboxContent className="p-2 ring-0">
+                <ComboboxList>
+                  <ComboboxItem key="acrylic" value="Acrylic">
+                    {"Acrylic"}
+                  </ComboboxItem>
+                  <ComboboxItem key="mica" value="Mica">
+                    {"Mica"}
+                  </ComboboxItem>
+                  <ComboboxItem key="none" value="None">
+                    {"None"}
+                  </ComboboxItem>
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
           </div>
-        </SettingsExpandarDetail>
-      </div>
-    </SettingsExpandar>
+        }
+      ></SettingsExpandar>
+    </div>
   );
 }

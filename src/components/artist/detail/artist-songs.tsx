@@ -59,7 +59,9 @@ export function ArtistSong({
 
   return (
     <div className="w-full h-full">
-      {filteredSongs.length > 0 && <SongList songList={filteredSongs} />}
+      {filteredSongs.length > 0 && (
+        <SongList songList={filteredSongs} showAlbum={true} />
+      )}
 
       <div ref={loadMoreRef} className="flex justify-center py-4">
         {loading && <Loading />}

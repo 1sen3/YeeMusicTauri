@@ -18,7 +18,7 @@ import { useUserStore } from "@/lib/store/userStore";
 import { likeSong } from "@/lib/services/user";
 import { toast } from "sonner";
 import { YeeSlider } from "../yee-slider";
-import { cn, formatDuration } from "@/lib/utils";
+import { GetThumbnail, cn, formatDuration } from "@/lib/utils";
 import { MusicLevelModal } from "../modal/music-level-modal";
 import { SFIcon } from "@bradleyhodges/sfsymbols-react";
 import { sfQuoteBubble, sfQuoteBubbleFill } from "@bradleyhodges/sfsymbols";
@@ -69,7 +69,11 @@ function SongCover() {
   return (
     <div className="w-full h-1/2 flex items-center justify-center translate-y-8">
       <div className="w-64 h-64 relative rounded-lg shadow-xl overflow-hidden">
-        <img src={currentSong?.al?.picUrl || ""} alt="" className="w-64 h-64" />
+        <img
+          src={GetThumbnail(currentSong!.al.picUrl!, 800)}
+          alt=""
+          className="w-64 h-64"
+        />
       </div>
     </div>
   );
@@ -120,7 +124,7 @@ function SongMeta({
   return (
     <div className="flex justify-between items-center">
       <div className="w-4/7 flex flex-col gap-0">
-        <span className="text-xl font-bold text-white/80 saturate-50 drop-shadow-md mix-blend-overlay line-clamp-1">
+        <span className="text-xl font-bold text-white/80 saturate-50 drop-shadow-md mix-blend-overlay line-clamp-1 select-none">
           {currentSong?.name}
         </span>
         <div className="line-clamp-1">

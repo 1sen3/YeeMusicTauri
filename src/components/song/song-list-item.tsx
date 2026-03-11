@@ -1,5 +1,5 @@
 import { Song } from "@/lib/types";
-import { cn, formatDuration } from "@/lib/utils";
+import { GetThumbnail, cn, formatDuration } from "@/lib/utils";
 import { MoreHorizontal24Regular, Play24Filled } from "@fluentui/react-icons";
 import { Button } from "../ui/button";
 import { usePlayerStore } from "@/lib/store/playerStore";
@@ -35,12 +35,12 @@ export function SongListItem({
         <div className="flex gap-4 items-center ">
           {showCover ? (
             <div
-              className="w-10 h-10 relative rounded-sm overflow-hidden shrink-0 shadow-sm group cursor-pointer"
+              className="w-10 h-10 relative rounded-sm overflow-hidden shrink-0 group cursor-pointer border"
               onClick={() => playSong(song)}
             >
               <img
                 className="group-hover:brightness-50 transition-all duration-300 object-cover"
-                src={song.al?.picUrl || ""}
+                src={GetThumbnail(song.al.picUrl!)}
                 alt={`${song.al?.name}专辑封面`}
                 loading="lazy"
               />

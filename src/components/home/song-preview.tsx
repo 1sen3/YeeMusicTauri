@@ -4,7 +4,7 @@ import { likeSong } from "@/lib/services/user";
 import { usePlayerStore } from "@/lib/store/playerStore";
 import { useUserStore } from "@/lib/store/userStore";
 import { Resource } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { GetThumbnail, cn } from "@/lib/utils";
 import {
   ArrowDownload24Regular,
   Heart24Filled,
@@ -96,7 +96,7 @@ export function SongPreviewItem({ resource }: { resource: Resource }) {
       >
         <img
           loading="lazy"
-          src={cover}
+          src={GetThumbnail(cover)}
           alt="Album cover"
           className="object-cover group-hover:brightness-50 transform transition-all duration-300 ease-in-out group-hover:blur-md"
         />
@@ -105,7 +105,7 @@ export function SongPreviewItem({ resource }: { resource: Resource }) {
           <Play24Filled
             width={24}
             height={24}
-            className="hover:scale-110 transition-transform"
+            className="hover:scale-110 transition-transform text-white"
           />
         </div>
       </div>

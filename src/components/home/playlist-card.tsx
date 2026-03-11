@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Play28Filled } from "@fluentui/react-icons";
 import { usePlayerStore } from "@/lib/store/playerStore";
 import { Link } from "react-router-dom";
+import { GetThumbnail } from "@/lib/utils";
 
 export function PlaylistCard({ resource }: { resource: Resource | null }) {
   const { playList } = usePlayerStore();
@@ -43,7 +44,7 @@ export function PlaylistCard({ resource }: { resource: Resource | null }) {
           <Link to={`/detail/playlist?id=${resource.resourceId}`}>
             <img
               className="group-hover:blur-md transition duration-300 w-full h-full object-cover"
-              src={cover}
+              src={GetThumbnail(cover)}
               alt="Album cover"
             />
 

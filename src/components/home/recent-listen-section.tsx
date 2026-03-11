@@ -3,6 +3,7 @@ import ChromaGrid from "@/components/ChromaGrid";
 import { Vibrant } from "node-vibrant/browser";
 import { useEffect, useState } from "react";
 import { usePlayerStore } from "@/lib/store/playerStore";
+import { GetThumbnail } from "@/lib/utils";
 
 export function RecentListenSection({
   resources,
@@ -18,7 +19,7 @@ export function RecentListenSection({
     const loadItems = async () => {
       const processedItems = await Promise.all(
         resources.map(async (res) => {
-          const cover = res.coverUrlList?.[0];
+          const cover = GetThumbnail(res.coverUrlList?.[0]);
           const typeLink =
             res.resourceType === "list" ? "playlist" : res.resourceType;
           let coverColor = "black",

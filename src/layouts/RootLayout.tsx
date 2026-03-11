@@ -31,7 +31,10 @@ export default function RootLayout() {
             </Suspense>
 
             <div className="relative flex flex-col flex-1 overflow-hidden bg-card/60 border border-border rounded-tl-lg border-b-0">
-              <main className="flex-1 w-full h-full overflow-y-auto">
+              <main
+                id="main-scroll-container"
+                className="flex-1 w-full h-full overflow-y-auto"
+              >
                 <div className="W-full flex flex-col">
                   <Outlet />
                 </div>

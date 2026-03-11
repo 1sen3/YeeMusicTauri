@@ -67,11 +67,6 @@ export default function Page() {
       ) : (
         <div className="w-full min-h-full h-full px-8 py-8 flex flex-col gap-12">
           {recentListenList && (
-            // <Section title={recentListenList.title}>
-            //   {recentListenList.resources.map((res, idx) => (
-            //     <RecentListenCard resource={res} key={idx} />
-            //   ))}
-            // </Section>
             <RecentListenSection resources={recentListenList.resources} />
           )}
 

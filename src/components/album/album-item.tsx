@@ -1,5 +1,5 @@
 import { Album } from "@/lib/types";
-import { cn, formateDate } from "@/lib/utils";
+import { GetThumbnail, cn, formateDate } from "@/lib/utils";
 import { Play24Filled } from "@fluentui/react-icons";
 import { usePlayerStore } from "@/lib/store/playerStore";
 import { Link } from "react-router-dom";
@@ -20,7 +20,7 @@ export function AlbumItem({
       <div className="size-32 rounded-md overflow-hidden relative drop-shadow-md group cursor-pointer">
         <Link to={`/detail/album?id=${album.id}`}>
           <img
-            src={album.picUrl!}
+            src={GetThumbnail(album.picUrl!)}
             alt={`${album.name} Cover`}
             loading="lazy"
             className="group-hover:brightness-60 transition-all duration-300 object-cover"

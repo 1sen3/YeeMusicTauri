@@ -29,8 +29,9 @@ export default function SettingsExpandar({
     <div className="flex flex-col w-full gap-0">
       <div
         className={cn(
-          "flex flex-col gap-2 w-full bg-card border rounded-sm p-4 hover:bg-card/60",
+          "flex flex-col gap-2 w-full bg-card/60 border rounded-sm p-4 ",
           showDetail && "rounded-b-none",
+          hasDetail && "hover:bg-card/20",
           className,
         )}
         onClick={() => setShowDetail((show) => !show)}

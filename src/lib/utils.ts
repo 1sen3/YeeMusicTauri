@@ -74,3 +74,7 @@ export async function getCropppedImg(imageSrc: string, pixelCrop: Area) {
     }, "image/jpeg");
   });
 }
+
+export function GetThumbnail(url: string, size: number = 200) {
+  return `${url}?param=${size}y${size}`;
+}

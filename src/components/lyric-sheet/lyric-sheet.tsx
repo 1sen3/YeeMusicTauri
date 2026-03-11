@@ -47,7 +47,12 @@ export function LyricSheet({ children }: { children: React.ReactNode }) {
 
         <LyricSheetBackground />
 
-        <div className="relative h-full w-full flex flex-col">
+        <div
+          className="relative h-full w-full flex flex-col"
+          onMouseDown={(e) => {
+            e.preventDefault();
+          }}
+        >
           <LyricSheetTitlebar setIsOpen={setIsOpen} />
 
           <div className="h-full w-full flex justify-between p-4 pt-4 pb-0">
