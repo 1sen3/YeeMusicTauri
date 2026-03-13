@@ -30,7 +30,7 @@ import { useContextMenuStore } from "@/lib/store/contextMenuStore";
 export function PlayerBar() {
   return (
     <div
-      className="w-full h-20 grid grid-cols-3 relative bg-card/60"
+      className="w-full h-20 grid grid-cols-3 relative bg-card/60 border-t"
       onContextMenu={(e) => e.preventDefault()}
     >
       <LeftButtonRegion />

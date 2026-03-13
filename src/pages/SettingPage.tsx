@@ -230,6 +230,7 @@ function UpdateSettingCard() {
     try {
       await checkForUpdates();
     } catch (e) {
+      console.log(`failed to check update: ${e}`);
       toast.error("检查更新失败，请重试...");
     } finally {
       setChecking(false);

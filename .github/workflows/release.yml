@@ -1,4 +1,5 @@
 name: Release
+
 on:
   push:
     tags:
@@ -6,14 +7,16 @@ on:
 
 jobs:
   release:
-    permissions:
-      contents: write
     strategy:
       fail-fast: false
       matrix:
         platform: [windows-latest]
 
+    permissions:
+      contents: write
+
     runs-on: ${{ matrix.platform }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -47,8 +50,14 @@ jobs:
           releaseDraft: false
           prerelease: false
 
+      - name: List build artifacts
+        if: success() && matrix.platform == 'windows-latest'
+        shell: bash
+        run: |
+          echo "Listing files in src-tauri/target/release/bundle:"
+          ls -R src-tauri/target/release/bundle || echo "Directory not found"
+
       - name: Update updater metadata
-        # 仅在 windows 构建成功后尝试更新 metadata
         if: success() && matrix.platform == 'windows-latest'
         shell: bash
         run: |
@@ -56,54 +65,47 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          # 临时保存最新的构建版本和签名信息
-          # Tauri 2.0 会在 target/release/bundle/msi/ 目录下生成 .msi.zip 和 .msi.zip.sig
           VERSION="${{ github.ref_name }}"
-          VERSION="${VERSION#v}" # 去掉 v 前缀
-
-          # 切换到 updater 分支（如果不存在则创建）
-          git fetch origin updater || true
-          git checkout updater || git checkout --orphan updater
-          git pull origin updater || true
-          git rm -rf . || true
-
+          TAG="${{ github.ref_name }}"
           REPO_OWNER="${{ github.repository_owner }}"
           REPO_NAME="${{ github.event.repository.name }}"
-          TAG="${{ github.ref_name }}"
 
-          # 提取本地生成的签名并构建 JSON
+          # 1. 递归搜索 .sig 文件并构建 metadata
+          # 使用 node 脚本来处理，因为它比 bash 更容易处理 JSON 和文件搜索
           node -e "
             const fs = require('fs');
             const path = require('path');
-            
-            // 尝试多个可能的输出目录
-            const possibleDirs = [
-              'src-tauri/target/release/bundle/msi',
-              'src-tauri/target/release/bundle/nsis'
-            ];
-            
-            let searchDir = '';
-            for (const dir of possibleDirs) {
-              if (fs.existsSync(dir)) {
-                searchDir = dir;
-                break;
+
+            function findFile(dir, predicate) {
+              if (!fs.existsSync(dir)) return null;
+              const files = fs.readdirSync(dir);
+              for (const file of files) {
+                const fullPath = path.join(dir, file);
+                const stats = fs.statSync(fullPath);
+                if (stats.isDirectory()) {
+                  const found = findFile(fullPath, predicate);
+                  if (found) return found;
+                } else if (predicate(file)) {
+                  return fullPath;
+                }
               }
+              return null;
             }
-            if (!searchDir) {
-              console.error('错误: 找不到打包目录 (msi 或 nsis)');
+
+            const searchRoot = 'src-tauri/target/release/bundle';
+            const sigPath = findFile(searchRoot, f => f.endsWith('.sig'));
+
+            if (!sigPath) {
+              console.error('错误: 在 ' + searchRoot + ' 中找不到 .sig 签名文件。');
+              console.error('请确保 TAURI_PRIVATE_KEY 和 TAURI_PASSWORD 已正确设置。');
               process.exit(1);
             }
-            const files = fs.readdirSync(searchDir);
-            const signatureFile = files.find(f => f.endsWith('.sig'));
-            
-            if (!signatureFile) {
-              console.error('错误: 在 ' + searchDir + ' 中找不到 .sig 签名文件。请检查 TAURI_PRIVATE_KEY 是否正确设置。');
-              process.exit(1);
-            }
-            const assetFile = signatureFile.replace('.sig', '');
-            const signature = fs.readFileSync(path.join(searchDir, signatureFile), 'utf-8').trim();
+
+            console.log('找到签名文件:', sigPath);
+            const signature = fs.readFileSync(sigPath, 'utf-8').trim();
+            const assetFile = path.basename(sigPath).replace('.sig', '');
             const downloadUrl = 'https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/download/${TAG}/' + assetFile;
-            
+
             const latest = {
               version: '${TAG}',
               notes: 'Update released on ' + new Date().toISOString(),
@@ -112,14 +114,21 @@ jobs:
                 'windows-x86_64': { signature, url: downloadUrl }
               }
             };
-            
-            fs.writeFileSync('latest.json', JSON.stringify(latest, null, 2));
-            console.log('成功生成 latest.json');
+
+            // 临时保存，稍后切分支后再写回
+            fs.writeFileSync('latest_temp.json', JSON.stringify(latest, null, 2));
           "
 
+          # 2. 干净地切换到 updater 分支
+          # 我们使用一个新的克隆或利用现有的 worktree 来避免在主分支留下残余
+          git fetch origin updater || git checkout --orphan updater
+          git checkout updater
+          git pull origin updater || true
+
+          # 只保留最新生成的 metadata
+          mv latest_temp.json latest.json
+          
           # 提交并推送
-          if [ -f "latest.json" ]; then
-            git add latest.json
-            git commit -m "update updater metadata for ${TAG}"
-            git push origin updater
-          fi
+          git add latest.json
+          git commit -m "update updater metadata for ${TAG}" || echo "No changes to commit"
+          git push origin updater

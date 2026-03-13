@@ -44,7 +44,7 @@
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDgzMkMzMzczMzM0OTQ2QjUKUldTMVJra3pjek1zZzBvMW4zL0RFYjd4aWxocUdYekNtTHQrNU5FZzRhb3VwVUVNU0FyeWIzTWsK",
       "active": true,
       "endpoints": [
-        "https://raw.githubusercontent.com/1sen3/YeeMusicTauri/refs/heads/updater/latest.json"
+        "https://raw.githubusercontent.com/1sen3/YeeMusicTauri/updater/latest.json"
       ]
     }
   }
