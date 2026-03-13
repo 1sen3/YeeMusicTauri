@@ -67,29 +67,40 @@ jobs:
           git pull origin updater || true
           git rm -rf . || true
 
-          # 生成 latest.json
-          # 注意：URL 指向的是刚发布的 Release 资源
-          # 你需要根据你的仓库名调整 URL 模板
           REPO_OWNER="${{ github.repository_owner }}"
           REPO_NAME="${{ github.event.repository.name }}"
           TAG="${{ github.ref_name }}"
 
-          # 这里通过一个简单的脚本提取本地生成的签名并构建 JSON
+          # 提取本地生成的签名并构建 JSON
           node -e "
             const fs = require('fs');
             const path = require('path');
             
-            // 查找签名文件 (Tauri 2 默认在 bundle 下)
-            // 注意：路径可能需要根据你实际打包结果微调
-            const searchDir = 'src-tauri/target/release/bundle/msi';
-            if (!fs.existsSync(searchDir)) {
-               console.log('Search directory not found: ' + searchDir);
-               process.exit(0);
+            // 尝试多个可能的输出目录
+            const possibleDirs = [
+              'src-tauri/target/release/bundle/msi',
+              'src-tauri/target/release/bundle/nsis'
+            ];
+            
+            let searchDir = '';
+            for (const dir of possibleDirs) {
+              if (fs.existsSync(dir)) {
+                searchDir = dir;
+                break;
+              }
+            }
+            if (!searchDir) {
+              console.error('错误: 找不到打包目录 (msi 或 nsis)');
+              process.exit(1);
             }
             const files = fs.readdirSync(searchDir);
             const signatureFile = files.find(f => f.endsWith('.sig'));
-            const assetFile = signatureFile.replace('.sig', '');
             
+            if (!signatureFile) {
+              console.error('错误: 在 ' + searchDir + ' 中找不到 .sig 签名文件。请检查 TAURI_PRIVATE_KEY 是否正确设置。');
+              process.exit(1);
+            }
+            const assetFile = signatureFile.replace('.sig', '');
             const signature = fs.readFileSync(path.join(searchDir, signatureFile), 'utf-8').trim();
             const downloadUrl = 'https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/download/${TAG}/' + assetFile;
             
@@ -98,14 +109,12 @@ jobs:
               notes: 'Update released on ' + new Date().toISOString(),
               pub_date: new Date().toISOString(),
               platforms: {
-                'windows-x86_64': {
-                  signature: signature,
-                  url: downloadUrl
-                }
+                'windows-x86_64': { signature, url: downloadUrl }
               }
             };
             
             fs.writeFileSync('latest.json', JSON.stringify(latest, null, 2));
+            console.log('成功生成 latest.json');
           "
 
           # 提交并推送
