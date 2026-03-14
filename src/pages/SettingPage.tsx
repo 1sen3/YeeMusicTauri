@@ -31,6 +31,8 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
+import { useEffect } from "react";
+import { getVersion } from "@tauri-apps/api/app";
 
 export default function SettingPage() {
   return (
@@ -187,6 +189,7 @@ function ThemeSettingCard() {
 }
 
 function UpdateSettingCard() {
+  const [version, setVersion] = useState("");
   const [checking, setChecking] = useState(false);
   const [isNewest, setIsNewest] = useState(false);
 
@@ -233,11 +236,20 @@ function UpdateSettingCard() {
     }
   }
 
+  useEffect(() => {
+    async function loadVersion() {
+      const v = await getVersion();
+      setVersion(v);
+    }
+
+    loadVersion();
+  }, []);
+
   return (
     <div className="flex flex-col gap-0">
       <SettingsExpandar
         className={cn(isNewest && "rounded-b-none")}
-        title="Beta 0.1.8"
+        title={`Beta ${version}`}
         // subtitle="上次更新：2026-03-14"
         icon={<CheckmarkStarburst24Regular />}
         trailing={

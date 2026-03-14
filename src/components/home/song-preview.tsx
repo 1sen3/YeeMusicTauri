@@ -19,7 +19,7 @@ import { useContextMenuStore } from "@/lib/store/contextMenuStore";
 
 export function SongPreview({ resources }: { resources: Resource[] }) {
   return (
-    <div className="flex flex-col gap-6 w-1/2">
+    <div className="flex flex-col gap-6 basis-[calc((100%_-_1rem)/2)]">
       {resources.map((res) => (
         <SongPreviewItem resource={res} key={res.resourceId} />
       ))}
@@ -64,21 +64,6 @@ export function SongPreviewItem({ resource }: { resource: Resource }) {
     }
   }
 
-  if (!resource) {
-    return (
-      <div className="bg-white flex gap-4 justify-between">
-        <div className="w-16 h-16 rounded-sm overflow-hidden">
-          <Skeleton className="w-full h-full" />
-        </div>
-
-        <div className="flex-1 flex flex-col gap-2 justify-center">
-          <Skeleton className="w-1/2 h-4" />
-          <Skeleton className="w-1/4 h-4" />
-        </div>
-      </div>
-    );
-  }
-
   async function handlePlay() {
     const songId = resource.resourceId;
     if (!songId) return;
@@ -107,7 +92,7 @@ export function SongPreviewItem({ resource }: { resource: Resource }) {
           loading="lazy"
           src={GetThumbnail(cover)}
           alt="Album cover"
-          className="object-cover group-hover:brightness-50 transform transition-all duration-300 ease-in-out group-hover:blur-md"
+          className="object-cover group-hover:brightness-50 transform transition-all duration-300 ease-in-out"
         />
 
         <div className="cursor-pointer opacity-0 group-hover:opacity-100 bg-black/50 absolute top-0 left-0 w-full h-full flex items-center justify-center  text-foreground transform transition-all duration-300 ease-in-out">
@@ -133,7 +118,7 @@ export function SongPreviewItem({ resource }: { resource: Resource }) {
         </div>
       </div>
 
-      <div className="flex items-center gap-4 opacity-0 group-hover:opacity-100 pr-6 translate-x-20 group-hover:translate-x-0 transform transition-all duration-300 ease-in-out">
+      <div className="flex items-center gap-4 opacity-0 group-hover:opacity-100 pr-8 translate-x-20 group-hover:translate-x-0 transform transition-all duration-300 ease-in-out">
         <ArrowDownload24Regular className="size-5 text-foreground cursor-pointer hover:text-foreground/80" />
         <LikeIcon
           onClick={handleLike}

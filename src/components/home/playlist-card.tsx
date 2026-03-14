@@ -51,7 +51,7 @@ export function PlaylistCard({ resource }: { resource: Resource | null }) {
         <div className="w-full h-full relative cursor-pointer group">
           <Link to={`/detail/playlist?id=${resource.resourceId}`}>
             <img
-              className="group-hover:blur-md transition duration-300 w-full h-full object-cover"
+              className="transition duration-300 w-full h-full object-cover"
               src={GetThumbnail(cover)}
               alt="Album cover"
             />

@@ -38,6 +38,7 @@ export function LoginForm({
   const [phone, setPhone] = useState("");
   const [captcha, setCaptcha] = useState("");
   const [captchaPassed, setCaptchaPassed] = useState(false);
+  const [error, setError] = useState("账号未注册，请重试");
 
   // const [qrKey, setQrKey] = useState("");
   const [qrCodeImg, setQrCodeImg] = useState("");
@@ -67,9 +68,6 @@ export function LoginForm({
     try {
       setIsLoad(true);
       await sentCaptcha(phone);
-
-      toast("验证码发送成功");
-
       // 发送成功，开始倒计时
       setCount(60);
       timerRef.current = setInterval(() => {
@@ -110,12 +108,18 @@ export function LoginForm({
       setIsLogin(true);
       const res = await loginByPhone(phone, captcha);
       if (res.code === 200) {
-        toast("登录成功", { position: "top-right" });
+        toast.success("登录成功", { position: "top-right" });
         setUser(res.profile);
         onOpenChange?.(false);
       }
     } catch (err) {
       console.error(err);
+
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("登录失败，请重试");
+      }
     } finally {
       setIsLogin(false);
     }
@@ -152,7 +156,7 @@ export function LoginForm({
           clearInterval(qrTimerRef.current!);
         } else if (res.code === 803) {
           clearInterval(qrTimerRef.current!);
-          toast("登录成功", { position: "top-center" });
+          toast.success("登录成功", { position: "top-center" });
 
           const statusRes = await loginStatus();
           if (statusRes.code === 200 && statusRes.profile)
@@ -181,15 +185,13 @@ export function LoginForm({
           </YeeDialogCloseButton>
           <YeeDialogPrimaryButton
             type="submit"
-            disabled={!captchaPassed}
+            disabled={!captchaPassed || error !== ""}
             onClick={handleLogin}
-            variant={theme === "dark" ? "dark" : "light"}
           >
             {isLogin ? <Spinner /> : ""}登录
           </YeeDialogPrimaryButton>
         </div>
       }
-      variant={theme === "dark" ? "dark" : "light"}
     >
       <div className="p-4 w-full min-w-0">
         <Tabs
@@ -207,17 +209,34 @@ export function LoginForm({
             <TabsTrigger value="qrcode">扫码登录</TabsTrigger>
           </TabsList>
           <TabsContent value="cellphone">
-            <div className="w-full flex flex-col gap-6 pt-6">
-              <div className="w-full flex flex-col gap-4">
+            <div className="w-full flex flex-col gap-10 pt-6">
+              <div className="w-full flex flex-col gap-4 relative">
                 <Label htmlFor="phone">手机号</Label>
                 <Input
                   id="phone"
                   name="name"
                   placeholder="请输入手机号"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="rounded-full bg-white w-full drop-shadow-sm"
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                    setCaptchaPassed(false);
+                    if (error) setError("");
+                  }}
+                  onBlur={() => {
+                    if (!phone) return;
+                    if (!/^1\d{10}$/.test(phone)) {
+                      setError("手机号格式不正确");
+                    }
+                  }}
+                  className={cn(
+                    "rounded-full bg-white w-full drop-shadow-sm",
+                    error && "ring-destructive ring-2",
+                  )}
+                  autoComplete="off"
                 />
+                <span className="text-destructive text-xs -mt-1 absolute -bottom-6.5">
+                  {error}
+                </span>
               </div>
               <div className="w-full flex flex-col gap-4">
                 <Label htmlFor="captcha">验证码</Label>
@@ -237,10 +256,8 @@ export function LoginForm({
                   />
                   <motion.button
                     className={cn(
-                      captchaPassed
-                        ? "bg-green-500 hover:bg-green-600"
-                        : "bg-foreground",
-                      "rounded-full shrink-0 text-background px-4 whitespace-nowrap overflow-hidden flex items-center justify-center",
+                      captchaPassed ? "bg-green-600!" : "bg-foreground",
+                      "rounded-full shrink-0  px-4 whitespace-nowrap overflow-hidden flex items-center justify-center bg-background text-foreground",
                     )}
                     disabled={isLoad || captchaPassed}
                     onClick={handleGetCaptcha}

@@ -27,7 +27,6 @@ export function LyricSheetAudioLevelModel({
 
   return (
     <YeeDialog
-      variant="dark"
       title="音频质量"
       asForm={false}
       trigger={
@@ -38,7 +37,7 @@ export function LyricSheetAudioLevelModel({
       footer={
         <div className="w-full flex gap-2">
           <YeeDialogPrimaryButton
-            variant="dark"
+            className="bg-card hover:bg-card/80 text-foreground"
             onClick={() => {
               navigate("/setting");
               setIsLyricSheetOpen(false);
@@ -46,7 +45,9 @@ export function LyricSheetAudioLevelModel({
           >
             详细设置
           </YeeDialogPrimaryButton>
-          <YeeDialogCloseButton variant="dark">好</YeeDialogCloseButton>
+          <YeeDialogCloseButton className="bg-primary hover:bg-primary/80 text-white">
+            好
+          </YeeDialogCloseButton>
         </div>
       }
     >
@@ -70,7 +71,7 @@ export function LyricSheetAudioLevelModel({
             />
           </div>
         </MusicLevelPopover>
-        <span className="text-lg text-white/60">
+        <span className="text-lg text-foreground/60">
           {!isUnlock &&
             formatFileSize(
               currentSongMusicDetail.find(

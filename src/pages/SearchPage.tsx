@@ -145,7 +145,17 @@ function SearchContent() {
   };
 
   return (
-    <div className="w-full min-h-full px-8 pb-8 flex flex-col relative">
+    <div className="w-full min-h-full p-8 flex flex-col relative gap-2">
+      <div
+        className={cn(
+          "text-4xl font-bold relative mt-4 mb-2",
+          "before:content-['“'] before:text-muted-foreground/60 before:text-5xl",
+          "after:content-['”'] after:text-muted-foreground/60 after:text-5xl",
+        )}
+      >
+        {query}
+      </div>
+
       <div
         className={cn(
           "flex justify-between items-center shrink-0 sticky top-0 z-30 py-6",

@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import { useUserStore } from "@/lib/store/userStore";
 
 export function SearchInput() {
   const [query, setQuery] = useState("");
@@ -15,6 +16,8 @@ export function SearchInput() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const navigate = useNavigate();
+
+  const user = useUserStore((s) => s.user);
 
   useEffect(() => {
     async function fetchDefault() {
@@ -26,7 +29,7 @@ export function SearchInput() {
       }
     }
     fetchDefault();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (!debouncedQuery) {
@@ -94,7 +97,7 @@ export function SearchInput() {
       <Input
         placeholder={placeholder}
         className={cn(
-          "w-72 bg-card/80 pr-8 rounded-md shadow-xs border-border/80 focus:border-border/80! focus:ring-0!",
+          "w-72 bg-card/60! pr-8 rounded-md shadow-xs border-border/80 focus:border-border/80! focus:ring-0!",
           isOpen && suggestions.length > 0 && "rounded-b-none",
         )}
         value={query}
@@ -123,7 +126,7 @@ export function SearchInput() {
                 <div
                   key={suggest}
                   className={cn(
-                    "hover:bg-black/5 w-full p-2 rounded-md cursor-pointer relative",
+                    "hover:bg-black/5 w-full p-2 rounded-sm cursor-pointer relative",
                     index === selectedIndex && "bg-accent",
                   )}
                   onMouseDown={(e) => e.preventDefault()}
@@ -140,7 +143,7 @@ export function SearchInput() {
             </div>
 
             <motion.span
-              className="absolute top-0 w-full h-[2px] bg-primary left-1/2 -translate-x-1/2"
+              className="absolute top-0 w-full h-0.5 bg-primary left-1/2 -translate-x-1/2"
               initial={{ opacity: 0, width: 0 }}
               animate={{ opacity: 1, width: "100%" }}
               exit={{ opacity: 0, width: 0 }}

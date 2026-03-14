@@ -1,11 +1,10 @@
-import { useContainerWidth } from "@/hooks/useContainrWidth";
 import {
   ArrowClockwise24Regular,
   CaretLeft24Filled,
   CaretRight24Filled,
   ChevronRight24Regular,
 } from "@fluentui/react-icons";
-import React, { ReactNode, useState, useMemo } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { YeeButton } from "../yee-button";
 
 interface SectionProps {
@@ -14,11 +13,8 @@ interface SectionProps {
   seeMore?: boolean;
   refresh?: boolean;
   itemsPerPage?: number;
-  itemWidth?: number; // 卡片宽度，默认 128px (w-32)
+  itemWidth?: number;
 }
-
-const GAP = 32; // gap-8 = 32px
-const DEFAULT_ITEM_WIDTH = 128; // w-32 = 128px
 
 export function Section({
   title,
@@ -26,46 +22,133 @@ export function Section({
   seeMore,
   refresh,
   itemsPerPage,
-  itemWidth = DEFAULT_ITEM_WIDTH,
+  itemWidth: _itemWidth,
 }: SectionProps) {
-  const [currentPage, setCurrentPage] = useState(0);
-  const { ref, width } = useContainerWidth();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [hasOverflow, setHasOverflow] = useState(false);
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
 
-  // 计算每页显示的 items 数量
-  const itemPerView = useMemo(() => {
-    if (itemsPerPage) return itemsPerPage;
-    if (width === 0) return 4; // 默认值
+  const getPagePositions = (container: HTMLDivElement) => {
+    const childElements = Array.from(container.children) as HTMLElement[];
+    if (childElements.length === 0) return [0];
 
-    // n * itemWidth + (n-1) * gap <= containerWidth
-    // n <= (containerWidth + gap) / (itemWidth + gap)
-    const count = Math.floor((width + GAP * 2) / (itemWidth + GAP));
-    return count > 0 ? count : 1;
-  }, [width, itemsPerPage, itemWidth]);
+    const containerRect = container.getBoundingClientRect();
+    const maxScrollLeft = Math.max(
+      0,
+      container.scrollWidth - container.clientWidth,
+    );
+    const epsilon = 1;
 
-  const items = React.Children.toArray(children);
-  const totalPages = Math.ceil(items.length / itemPerView);
+    const items = childElements
+      .map((child) => {
+        const rect = child.getBoundingClientRect();
+        const start = rect.left - containerRect.left + container.scrollLeft;
 
-  // 确保 currentPage 不会越界
-  const safeCurrentPage = currentPage >= totalPages ? 0 : currentPage;
+        return {
+          start,
+          end: start + rect.width,
+        };
+      })
+      .sort((a, b) => a.start - b.start);
+
+    if (itemsPerPage && itemsPerPage > 0) {
+      return items
+        .filter((_, index) => index % itemsPerPage === 0)
+        .map((item) => Math.min(item.start, maxScrollLeft))
+        .filter((position, index, arr) => arr.indexOf(position) === index);
+    }
+
+    const pagePositions = [0];
+    let pageStart = 0;
+    let pageEnd = container.clientWidth;
+
+    for (const item of items) {
+      if (item.end > pageEnd + epsilon) {
+        pageStart = Math.min(item.start, maxScrollLeft);
+        pageEnd = pageStart + container.clientWidth;
+
+        if (pageStart > pagePositions[pagePositions.length - 1] + epsilon) {
+          pagePositions.push(pageStart);
+        }
+      }
+    }
+
+    if (maxScrollLeft > pagePositions[pagePositions.length - 1] + epsilon) {
+      pagePositions.push(maxScrollLeft);
+    }
+
+    return pagePositions;
+  };
+
+  const updateScrollState = () => {
+    const container = containerRef.current;
+    if (!container) {
+      setHasOverflow(false);
+      setCanScrollPrev(false);
+      setCanScrollNext(false);
+      return;
+    }
+
+    const maxScrollLeft = container.scrollWidth - container.clientWidth;
+    const epsilon = 1;
+    const overflow = maxScrollLeft > epsilon;
+    const pagePositions = getPagePositions(container);
+    const currentScrollLeft = container.scrollLeft;
+    const firstPage = pagePositions[0] ?? 0;
+    const lastPage = pagePositions[pagePositions.length - 1] ?? 0;
+
+    setHasOverflow(overflow);
+    setCanScrollPrev(currentScrollLeft > firstPage + epsilon);
+    setCanScrollNext(overflow && currentScrollLeft < lastPage - epsilon);
+  };
+
+  useEffect(() => {
+    updateScrollState();
+
+    const container = containerRef.current;
+    if (!container) return;
+
+    container.addEventListener("scroll", updateScrollState, { passive: true });
+    window.addEventListener("resize", updateScrollState);
+
+    return () => {
+      container.removeEventListener("scroll", updateScrollState);
+      window.removeEventListener("resize", updateScrollState);
+    };
+  }, [children]);
+
+  const scrollToChild = (direction: 1 | -1) => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const pagePositions = getPagePositions(container);
+    const currentScrollLeft = container.scrollLeft;
+    const epsilon = 1;
+
+    const target =
+      direction > 0
+        ? (pagePositions.find(
+            (position) => position > currentScrollLeft + epsilon,
+          ) ?? currentScrollLeft)
+        : ([...pagePositions]
+            .reverse()
+            .find((position) => position < currentScrollLeft - epsilon) ??
+          currentScrollLeft);
+
+    container.scrollTo({
+      left: target,
+      behavior: "smooth",
+    });
+  };
 
   const handlePrev = () => {
-    setCurrentPage((prev) => (prev - 1 + totalPages) % totalPages);
+    scrollToChild(-1);
   };
 
   const handleNext = () => {
-    setCurrentPage((prev) => (prev + 1) % totalPages);
+    scrollToChild(1);
   };
-
-  // 构建分页数据
-  const pages = useMemo(() => {
-    const result = [];
-    for (let i = 0; i < totalPages; i++) {
-      result.push(items.slice(i * itemPerView, (i + 1) * itemPerView));
-    }
-    return result;
-  }, [items, itemPerView, totalPages]);
-
-  const needPage = totalPages > 1;
 
   return (
     <section className="flex flex-col gap-4">
@@ -86,19 +169,21 @@ export function Section({
         </h2>
 
         <div className="flex gap-2 text-black/60 items-center">
-          {needPage && (
+          {hasOverflow && (
             <>
               <YeeButton
                 variant="ghost"
                 icon={<CaretLeft24Filled className="size-3" />}
                 className="size-6 rounded-full bg-card border! border-border! text-muted-foreground hover:text-muted-foreground"
                 onClick={handlePrev}
+                disabled={!canScrollPrev}
               />
               <YeeButton
                 variant="ghost"
                 icon={<CaretRight24Filled className="size-3" />}
                 className="size-6 rounded-full bg-card border! border-border! text-muted-foreground hover:text-muted-foreground"
                 onClick={handleNext}
+                disabled={!canScrollNext}
               />
             </>
           )}
@@ -108,25 +193,15 @@ export function Section({
         </div>
       </div>
 
-      <div className="w-full relative" ref={ref}>
-        <div className="overflow-hidden">
-          <div
-            className="flex transition-transform duration-500 ease-in-out"
-            style={{
-              transform: `translateX(-${safeCurrentPage * 100}%)`,
-            }}
-          >
-            {pages.map((pageItems, idx) => (
-              <div
-                key={idx}
-                className="flex gap-8 shrink-0"
-                style={{ width: "100%" }}
-              >
-                {pageItems}
-              </div>
-            ))}
-          </div>
-        </div>
+      <div
+        ref={containerRef}
+        className="flex w-full gap-8 overflow-x-auto scroll-smooth *:shrink-0 [&::-webkit-scrollbar]:hidden"
+        style={{
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
+      >
+        {children}
       </div>
     </section>
   );

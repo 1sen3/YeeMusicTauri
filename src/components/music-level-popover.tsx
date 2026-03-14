@@ -4,21 +4,10 @@ import { cn, formatFileSize } from "@/lib/utils";
 import { usePlayerStore } from "@/lib/store/playerStore";
 import { QualityWithKey } from "@/lib/types/song";
 import { ReactNode } from "react";
-import { cva } from "class-variance-authority";
-
-const popoverVarients = cva("w-64 rounded-lg", {
-  variants: {
-    variant: {
-      dark: "bg-black text-white border-white/20",
-      light: "bg-card/90 text-foreground backdrop-blur-md",
-    },
-  },
-});
 
 export function MusicLevelPopover({
   open,
   onOpenChange,
-  variant = "light",
   side = "top",
   sideOffset = 48,
   contentClassName,
@@ -53,7 +42,7 @@ export function MusicLevelPopover({
         ) : (
           <span
             className={cn(
-              "cursor-pointer bg-card hover:bg-card/50 rounded-md px-2 py-1 text-xs font-bold text-foreground/60 border",
+              "cursor-pointer bg-card/50 hover:bg-card/30 rounded-md px-2 py-1 text-xs font-bold text-foreground/60 border",
               className,
             )}
           >
@@ -64,7 +53,7 @@ export function MusicLevelPopover({
       <PopoverContent
         side={side}
         sideOffset={sideOffset}
-        className={cn(popoverVarients({ variant }), contentClassName)}
+        className={cn("w-64 rounded-lg", contentClassName)}
       >
         {isUnlock ? (
           <div className="text-center">灰色音源歌曲不支持修改音质</div>
@@ -74,7 +63,6 @@ export function MusicLevelPopover({
               (quality: QualityWithKey) =>
                 Object.keys(SONG_QUALITY).includes(quality.key) && (
                   <AudioLevelItem
-                    variant={variant}
                     key={quality.key}
                     level={quality.key as keyof typeof SONG_QUALITY}
                     size={formatFileSize(quality.size)}
@@ -91,7 +79,6 @@ export function MusicLevelPopover({
 }
 
 interface AudioLevelItemProps {
-  variant?: "light" | "dark";
   level: keyof typeof SONG_QUALITY;
   size: string;
   selected?: boolean;
@@ -99,7 +86,6 @@ interface AudioLevelItemProps {
 }
 
 export function AudioLevelItem({
-  variant,
   level,
   size,
   selected = false,
@@ -108,22 +94,15 @@ export function AudioLevelItem({
   return (
     <div
       className={cn(
-        "relative flex justify-between items-center  px-4 py-2 rounded-md cursor-pointer",
-        variant === "light" ? "hover:bg-foreground/5" : "hover:bg-white/10",
-        selected && (variant === "light" ? "bg-foreground/5" : "bg-white/10"),
+        "relative flex justify-between items-center  px-4 py-2 rounded-md cursor-pointer hover:bg-muted",
+        selected && "bg-muted",
       )}
       onClick={() => onClick(level)}
     >
       <span className="font-semibold">{SONG_QUALITY[level].desc}</span>
 
       <div className="flex gap-2 items-center">
-        <span
-          className={cn(
-            variant === "light" ? "text-foreground/60" : "text-white/60",
-          )}
-        >
-          {size}
-        </span>
+        <span className={cn("text-foreground/60")}>{size}</span>
         {selected && (
           <span className="w-1 h-4 bg-primary absolute left-0 -translate-1/2 top-1/2 rounded-full"></span>
         )}

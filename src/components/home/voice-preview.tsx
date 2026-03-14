@@ -8,7 +8,7 @@ import {
 
 export function VoicePreview({ creatives }: { creatives: creative[] }) {
   return (
-    <div className="flex flex-col gap-6 w-1/2">
+    <div className="flex flex-col gap-6 basis-[calc((100%_-_1rem)/2)]">
       {creatives.map((creative) => (
         <VoicePreviewItem creative={creative} key={creative.creativeId} />
       ))}

@@ -6,6 +6,7 @@ import { usePlayerStore } from "@/lib/store/playerStore";
 import { Link } from "react-router-dom";
 import { useContextMenuStore } from "@/lib/store/contextMenuStore";
 import React from "react";
+import { AudioLinesIcon } from "./audio-lines-icon";
 
 export function SongListItem({
   song,
@@ -20,6 +21,8 @@ export function SongListItem({
 }) {
   const openMenu = useContextMenuStore((s) => s.openMenu);
   const playSong = usePlayerStore((s) => s.playSong);
+  const currentSong = usePlayerStore((s) => s.currentSong);
+  const togglePlay = usePlayerStore((s) => s.togglePlay);
 
   const gridTemplate = showAlbum
     ? "grid-cols-[1fr_1fr_1fr_52px_26px]"
@@ -29,6 +32,8 @@ export function SongListItem({
     e.preventDefault();
     openMenu(e.clientX, e.clientY, "song", song);
   }
+
+  const isPlaying = currentSong?.id === song.id;
 
   return (
     <div
@@ -44,28 +49,51 @@ export function SongListItem({
       <div className={`grid ${gridTemplate} items-center px-4 py-3 group`}>
         <div className="flex gap-4 items-center ">
           {showCover ? (
-            <div
-              className="w-10 h-10 relative rounded-sm overflow-hidden shrink-0 group cursor-pointer border"
-              onClick={() => playSong(song)}
-            >
+            <div className="w-10 h-10 relative rounded-sm overflow-hidden shrink-0 group cursor-pointer border">
               <img
-                className="group-hover:brightness-50 transition-all duration-300 object-cover"
                 src={GetThumbnail(song.al.picUrl!)}
                 alt={`${song.al?.name}专辑封面`}
                 loading="lazy"
               />
 
-              <Play24Filled className="opacity-0 group-hover:opacity-100 size-4 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white transition-opacity" />
+              {!isPlaying && (
+                <div
+                  className="absolute w-10 h-10 left-1/2 top-1/2 -translate-1/2 group-hover:bg-black/50 flex justify-center items-center"
+                  onClick={() => playSong(song)}
+                >
+                  <Play24Filled className="opacity-0 group-hover:opacity-100 size-4 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white transition-opacity" />
+                </div>
+              )}
+              {isPlaying && (
+                <div
+                  className="absolute w-10 h-10 left-1/2 top-1/2 -translate-1/2 bg-black/50 flex justify-center items-center"
+                  onClick={() => togglePlay()}
+                >
+                  <AudioLinesIcon className="text-white" />
+                </div>
+              )}
             </div>
           ) : (
-            <div className="size-6 flex items-center justify-center text-foreground/40">
-              <span className="group-hover:hidden">{index + 1}</span>
-              <div className="hidden group-hover:flex hover:text-foreground/60 cursor-pointer">
-                <Play24Filled
-                  className="size-4"
-                  onClick={() => playSong(song)}
-                />
-              </div>
+            <div className="size-6 flex items-center justify-center text-foreground/40 relative">
+              {!isPlaying && (
+                <>
+                  <span className="group-hover:hidden">{index + 1}</span>
+                  <div
+                    className="hidden group-hover:flex hover:text-foreground/60 cursor-pointer"
+                    onClick={() => playSong(song)}
+                  >
+                    <Play24Filled className="size-4" />
+                  </div>
+                </>
+              )}
+              {isPlaying && (
+                <div
+                  className="absolute left-1/2 top-1/2 -translate-1/2 text-black cursor-pointer"
+                  onClick={() => togglePlay()}
+                >
+                  <AudioLinesIcon className="text-foreground/40 hover:text-foreground/60" />
+                </div>
+              )}
             </div>
           )}
           <span className="line-clamp-1 w-3/4 font-semibold text-sm">

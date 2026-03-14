@@ -59,7 +59,7 @@ export function PlaylistSheet() {
           </div>
         </SheetHeader>
 
-        <div className="flex-1 w-full">
+        <div className="flex-1 w-full -mt-8">
           <Virtuoso
             data={playlist}
             initialTopMostItemIndex={initialIndex !== -1 ? initialIndex : 0}
